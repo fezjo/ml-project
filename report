@@ -1,0 +1,42 @@
+Ako inspiraciu som pouzil pracu
+Author Identification of Micro-Messages via Multi-Channel Convolutional Neural Networks
+a prebral detaily z
+Convolutional Neural Networks for Authorship Attribution of Short Texts.
+
+Vstupne data obsahuju spravy 8 autorov.
+Dokopy mame viac ako 66 tisic vzoriek.
+Traja autori maju frekvenciu prblizne 27%, dvaja okolo 10% a zvysni maju male zastupenie.
+Median dlzky sprav je 4 slova a 23 znakov, 95% sprav ma menej ako 100 znakov.
+
+Data sme rozdelili do trenovacej, validacnej a testovacej skupiny s rozdelenim 72%, 8%, 20%.
+
+Text predspracujem odstranenim diakritiky a zmenou velkych pismen na male.
+Interpunkciu ponechavam.
+Dalej text rozdelim na slova a pismena a tieto dve reprezentacie dalej spracuvavam paralelne.
+Obe spracujem pomocou Kerasovho TextVectorization na 1- a 2-gramy.
+Velkost tychto vektorov je obmedzena na zaklade priemeru a odchylky dlzok sprav tak aby bola pokryta vacsina sprav.
+Tieto vektory su dalej spracovane pomocou Embeddingu a na nom pustime tri paralelne 2D konvolucie s 500 filtrami a rozmermi dimenzia embeddingu krat 3, 4 a 5.
+V ramci filtru potom extrahujeme globalne maximum, cim chceme ziskat najdolezitejiu feature vytvorenu danym filtrom.
+Nasledne uz iba vsetky tieto paralelne vrstvy spojime a husto spojime s output layerom.
+V ramci modelu mame aj Dropout vrstvy aby sme predosli overfittingu.
+
+Aj napriek tomu vsak celkom silno overfitujeme a uz po 5 epochach nam stupa validation loss a klesa validation accuracy.
+Trenujeme teda iba 6 epoch.
+
+Najcastejsi autor ma frekvenciu 28%, model dosahuje presnost 45% +-0.5%.
+Presnost okolo 40% vsak bolo lahke dosiahnut aj s ovela jednoduchsou strukturou siete.
+Clanok na ktorom je tento projekt zalozeny dosahoval pre (asi, nie som si isty) 100 autorov po 500 spravach presnost >70%.
+Neviem preco tak rychlo zacnem overfitovat a mam ovela horsie vysledky oproti spominanej praci.
+Je vsak pravda ze velke mnozstvo sprav su naozaj velmi kratke a vela sprav je medzi autormi podobnych.
+
+Dalsou moznostou ako vylepsit model by bolo pouzitie zdrojov ako FastText alebo pridanie dodatocnej informacie (okolity kontext sprav, datum a cas poslania spravy, ...).
+
+Velky problem v tomto projekte bolo, ze som nemal k dispozicii graficku kartu a Google Colab bol abosolutne rozbity.
+Bola mi pridelena graficka karta, ale trenovanie modelu obsahujuceho konvolucie bolo extremne pomale.
+Zahadne sa cas trenovania zhorsoval aj zmensenim velkosti modelu.
+Trenovanie bolo o viacero radov pomalsie ako by malo byt.
+Extrapolovanim na finalnu velkost modelu by trening jednej epochy trval niekolko hodin namiesto menej ako jednej minuty.
+Doteraz mi Google Colab nefunguje, ale eventuelne sa mi podarilo nieco spravit s Kagglom.
+
+Na vyskusanie som vytvoril rozhranie s Gradio.
+Nepodarilo sa mi za velmi dlhy cas spravit aby ten graf bol vacsi.
